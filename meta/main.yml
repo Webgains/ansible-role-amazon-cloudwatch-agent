@@ -2,10 +2,10 @@
 dependencies: []
 
 galaxy_info:
-  author: Jeremy Poulter
+  author: 1adam
   description: Role for setting up agent and registering to AWS Cloudwatch.
-  company: "Webgains LTD"
-  license: "All rights reserved"
+  company: "globeandmail"
+  license: "MIT"
   min_ansible_version: 2.8
   platforms:
     - name: Ubuntu
