@@ -1,5 +1,4 @@
 ---
-
 - name: Ensure log groups {{ item.log_group_name }} exist 
   cloudwatchlogs_log_group:
     log_group_name: "{{ item.log_group_name }}"
@@ -20,8 +19,9 @@
       metric_name: "{{ filter.metric_transformation.metric_name }}"
       metric_namespace: "{{ aws_cwa_namespace }}"
       metric_value: "{{ filter.metric_transformation.metric_value }}"
-    aws_access_key: "{{ deploy_aws_access_key | default(aws_access_key | default(lookup('env','AWS_ACCESS_KEY_ID'))) }}"
-    aws_secret_key: "{{ deploy_aws_secret_key | default(aws_secret_key | default(lookup('env','AWS_SECRET_ACCESS_KEY'))) }}"
+    aws_access_key: "{{ aws_access_key | default(omit) }}"
+    aws_secret_key: "{{ aws_secret_key | default(omit) }}"
+    security_token: "{{ security_token }}" # Use token to allow for assumed roles
     region: "{{ aws_region }}"
   with_items: "{{ item.filters | default([]) }}"
   loop_control:
