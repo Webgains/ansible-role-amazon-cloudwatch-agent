@@ -86,13 +86,6 @@
     mode: 0644
   notify: restart amazon-cloudwatch-agent
 
-- name: Install Python modules
-  become: yes
-  pip:
-    name:
-      - boto3
-  delegate_to: localhost
-
 - name: Setup log groups
   include_tasks: log_groups.yml
   with_items: "{{ aws_cwa_logfiles | default([]) }}"
