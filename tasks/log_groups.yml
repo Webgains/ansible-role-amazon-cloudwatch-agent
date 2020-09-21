@@ -4,10 +4,9 @@
     log_group_name: "{{ item.log_group_name }}"
     retention: "{{ item.log_retention|int }}"
     tags: "{{ item.log_group_tags }}"
-    aws_access_key: "{{ aws_access_key | default(omit) }}"
-    aws_secret_key: "{{ aws_secret_key | default(omit) }}"
-    security_token: "{{ security_token }}" # Use token to allow for assumed roles
-    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_cwa_key_access | default(omit) }}"
+    aws_secret_key: "{{ aws_cwa_key_secret | default(omit) }}"
+    region: "{{ aws_cwa_region }}"
   delegate_to: localhost
 
 - name: Ensure log group {{ item.log_group_name }} matrics exist
@@ -20,10 +19,9 @@
       metric_name: "{{ filter.metric_transformation.metric_name }}"
       metric_namespace: "{{ aws_cwa_namespace }}"
       metric_value: "{{ filter.metric_transformation.metric_value }}"
-    aws_access_key: "{{ aws_access_key | default(omit) }}"
-    aws_secret_key: "{{ aws_secret_key | default(omit) }}"
-    security_token: "{{ security_token }}" # Use token to allow for assumed roles
-    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_cwa_key_access | default(omit) }}"
+    aws_secret_key: "{{ aws_cwa_key_secret | default(omit) }}"
+    region: "{{ aws_cwa_region }}"
   with_items: "{{ item.filters | default([]) }}"
   loop_control:
     loop_var: filter
