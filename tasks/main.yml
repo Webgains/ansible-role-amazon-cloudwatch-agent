@@ -45,7 +45,9 @@
   package:
     name: amazon-cloudwatch-agent
     state: present
-  ignore_errors: yes
+  failed_when: 
+    - not (already_inst.rc == 0)
+    - not (already_inst.rc == 126)
   register: already_inst
 
 - block:
@@ -54,12 +56,11 @@
       package:
         name: amazon-cloudwatch-agent
         state: absent
-        purge: yes
     - name: purge dir tree if exists
       file:
         path: '/opt/aws/amazon-cloudwatch-agent'
         state: absent
-    when: (already_inst is success)
+    when: already_inst.rc == 0
   - name: make temp dir for installation files
     file:
       path: "/tmp/aws-cwa-inst"
@@ -76,7 +77,7 @@
     file:
       path: "/tmp/aws-cwa-inst/"
       state: "absent"
-  when: (already_inst is failed) or (aws_install_latest is defined) 
+  when: (already_inst.rc == 126) or (aws_install_latest is defined) 
   #ignore_errors: "{{ ansible_check_mode }}"
 
 - name: place cfgs, ie. amazon-cloudwatch-agent.json
