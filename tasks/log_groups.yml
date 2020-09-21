@@ -2,10 +2,11 @@
 - name: Ensure log groups {{ item.log_group_name }} exist 
   cloudwatchlogs_log_group:
     log_group_name: "{{ item.log_group_name }}"
-    retention: "{{item.log_retention|int}}"
-    tags: "{{item.log_group_tags}}"
-    aws_access_key: "{{ deploy_aws_access_key | default(aws_access_key | default(lookup('env','AWS_ACCESS_KEY_ID'))) }}"
-    aws_secret_key: "{{ deploy_aws_secret_key | default(aws_secret_key | default(lookup('env','AWS_SECRET_ACCESS_KEY'))) }}"
+    retention: "{{ item.log_retention|int }}"
+    tags: "{{ item.log_group_tags }}"
+    aws_access_key: "{{ aws_access_key | default(omit) }}"
+    aws_secret_key: "{{ aws_secret_key | default(omit) }}"
+    security_token: "{{ security_token }}" # Use token to allow for assumed roles
     region: "{{ aws_region }}"
   delegate_to: localhost
 
