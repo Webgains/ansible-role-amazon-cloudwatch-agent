@@ -4,8 +4,8 @@
     log_group_name: "{{ item.log_group_name }}"
     retention: "{{ item.log_retention|int }}"
     tags: "{{ item.log_group_tags }}"
-    aws_access_key: "{{ aws_cwa_key_access | default(omit) }}"
-    aws_secret_key: "{{ aws_cwa_key_secret | default(omit) }}"
+    aws_access_key: "{{ aws_cwa_key_access }}"
+    aws_secret_key: "{{ aws_cwa_key_secret }}"
     region: "{{ aws_cwa_region }}"
   delegate_to: localhost
 
@@ -19,8 +19,8 @@
       metric_name: "{{ filter.metric_transformation.metric_name }}"
       metric_namespace: "{{ aws_cwa_namespace }}"
       metric_value: "{{ filter.metric_transformation.metric_value }}"
-    aws_access_key: "{{ aws_cwa_key_access | default(omit) }}"
-    aws_secret_key: "{{ aws_cwa_key_secret | default(omit) }}"
+    aws_access_key: "{{ aws_cwa_key_access }}"
+    aws_secret_key: "{{ aws_cwa_key_secret }}"
     region: "{{ aws_cwa_region }}"
   with_items: "{{ item.filters | default([]) }}"
   loop_control:
