@@ -68,7 +68,7 @@
   - name: download & unpack the latest cloudwatch agent .zip
     unarchive:
       remote_src: "yes"
-      src: "https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip"
+      src: "{{ aws_cwa_url }}"
       dest: "/tmp/aws-cwa-inst/"
   - name: run the installer
     shell: cd /tmp/aws-cwa-inst && echo 'N' | ./install.sh
@@ -78,7 +78,6 @@
       path: "/tmp/aws-cwa-inst/"
       state: "absent"
   when: (already_inst.rc == 126) or (aws_install_latest is defined) 
-  #ignore_errors: "{{ ansible_check_mode }}"
 
 - name: place cfgs, ie. amazon-cloudwatch-agent.json
   template:
