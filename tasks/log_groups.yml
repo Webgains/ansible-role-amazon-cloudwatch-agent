@@ -6,8 +6,10 @@
     tags: "{{ item.log_group_tags }}"
     aws_access_key: "{{ aws_cwa_key_access }}"
     aws_secret_key: "{{ aws_cwa_key_secret }}"
+    security_token: "{{ security_token | default(omit) }}"
     region: "{{ aws_cwa_region }}"
   delegate_to: localhost
+  become: no
 
 - name: Ensure log group {{ item.log_group_name }} matrics exist
   cloudwatchlogs_log_group_metric_filter:
@@ -21,9 +23,11 @@
       metric_value: "{{ filter.metric_transformation.metric_value }}"
     aws_access_key: "{{ aws_cwa_key_access }}"
     aws_secret_key: "{{ aws_cwa_key_secret }}"
+    security_token: "{{ security_token | default(omit) }}"
     region: "{{ aws_cwa_region }}"
   with_items: "{{ item.filters | default([]) }}"
   loop_control:
     loop_var: filter
     label: "{{ item.log_group_name }}"
   delegate_to: localhost
+  become: no

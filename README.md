@@ -63,6 +63,13 @@ AWS secret key
 aws_cwa_key_secret: (encrypted)SECRETKEYGOESHERE
 ```
 
+### security_token
+AWS security token
+```
+security_token: "{{ lookup('env','AWS_SECURITY_TOKEN') }}"
+```
+Used while assuming an assumed role
+
 #### It's recommended that you declare `aws_cwa_key_access` and `aws_cwa_key_secret` in either a vault-encypted var file, or as vault-encrypted strings within a var file.
 
 ### aws_cwa_cfgs
