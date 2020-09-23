@@ -1,18 +1,18 @@
 ---
-- name: Ensure /root/.aws/ is there
+- name: Ensure /{{ aws_cwa_local_user }}/.aws/ is there
   file:
-    path: '/root/.aws/'
+    path: "/{{ aws_cwa_local_user }}/.aws/"
     state: 'directory'
     mode: '0700'
-    owner: 'root'
-    group: 'root'
+    owner: "{{ aws_cwa_local_user }}"
+    group: "{{ aws_cwa_local_user }}"
 
-- name: Add AWS CWA profile to /root/.aws/config
+- name: Add AWS CWA profile to /{{ aws_cwa_local_user }}/.aws/config
   blockinfile:
-    path: '/root/.aws/config'
+    path: "/{{ aws_cwa_local_user }}/.aws/config"
     create: 'yes'
-    owner: 'root'
-    group: 'root'
+    owner: "{{ aws_cwa_local_user }}"
+    group: "{{ aws_cwa_local_user }}"
     mode: 0600
     marker: "# {mark} ansible aws-cwa cfg"
     block: |
@@ -21,12 +21,12 @@
       region = {{aws_cwa_region|default('us-east-1')}}
   notify: restart amazon-cloudwatch-agent
 
-- name: Add AWS CWA profile to /root/.aws/credentials
+- name: Add AWS CWA profile to /{{ aws_cwa_local_user }}/.aws/credentials
   blockinfile:
-    path: '/root/.aws/credentials'
+    path: "/{{ aws_cwa_local_user }}/.aws/credentials"
     create: 'yes'
-    owner: 'root'
-    group: 'root'
+    owner: "{{ aws_cwa_local_user }}"
+    group: "{{ aws_cwa_local_user }}"
     mode: 0600
     marker: "# {mark} ansible aws-cwa cfg"
     block: |
@@ -100,8 +100,8 @@
 - name: Add log rotation for amazon-cloudwatch-agent.log
   copy:
     dest: '/etc/logrotate.d/aws-cwa'
-    owner: 'root'
-    group: 'root'
+    owner: "{{ aws_cwa_local_user }}"
+    group: "{{ aws_cwa_local_user }}"
     content: |
         /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log {
             size 50M
