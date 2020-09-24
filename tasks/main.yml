@@ -6,6 +6,7 @@
     mode: '0700'
     owner: "{{ aws_cwa_local_user }}"
     group: "{{ aws_cwa_local_user }}"
+  when: aws_cwa_on_prem
 
 - name: Add AWS CWA profile to /{{ aws_cwa_local_user }}/.aws/config
   blockinfile:
@@ -20,6 +21,7 @@
       output = json
       region = {{aws_cwa_region|default('us-east-1')}}
   notify: restart amazon-cloudwatch-agent
+  when: aws_cwa_on_prem
 
 - name: Add AWS CWA profile to /{{ aws_cwa_local_user }}/.aws/credentials
   blockinfile:
@@ -35,6 +37,7 @@
       aws_secret_access_key={{aws_cwa_key_secret}}
   notify: restart amazon-cloudwatch-agent
   no_log: True
+  when: aws_cwa_on_prem
 
 - name: Install pre-requisits
   package:
