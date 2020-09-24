@@ -1,11 +1,14 @@
 ---
+- debug:
+    var: security_token
+
 - name: Ensure log groups {{ item.log_group_name }} exist 
   cloudwatchlogs_log_group:
     log_group_name: "{{ item.log_group_name }}"
     retention: "{{ item.log_retention|int }}"
     tags: "{{ item.log_group_tags }}"
     aws_access_key: "{{ deploy_aws_access_key | default(lookup('env','AWS_ACCESS_KEY_ID')) }}"
-    aws_secret_key: "{{ deploy_aws_secret_key | default(lookup('env','AWS_ACCESS_KEY_ID')) }}"
+    aws_secret_key: "{{ deploy_aws_secret_key | default(lookup('env','AWS_SECRET_ACCESS_KEY')) }}"
     security_token: "{{ security_token | default(omit) }}"
     region: "{{ aws_cwa_region }}"
   delegate_to: localhost
@@ -22,7 +25,7 @@
       metric_namespace: "{{ aws_cwa_namespace }}"
       metric_value: "{{ filter.metric_transformation.metric_value }}"
     aws_access_key: "{{ deploy_aws_access_key | default(lookup('env','AWS_ACCESS_KEY_ID')) }}"
-    aws_secret_key: "{{ deploy_aws_secret_key | default(lookup('env','AWS_ACCESS_KEY_ID')) }}"
+    aws_secret_key: "{{ deploy_aws_secret_key | default(lookup('env','AWS_SECRET_ACCESS_KEY')) }}"
     security_token: "{{ security_token | default(omit) }}"
     region: "{{ aws_cwa_region }}"
   with_items: "{{ item.filters | default([]) }}"
