@@ -5,6 +5,7 @@ aws_cwa_disk_monitor_paths:
 
 aws_cwa_cfgs: generic-amazon-cloudwatch-agent.json.j2
 aws_cwa_url: "https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip"
-aws_cwa_local_user: root
+aws_cwa_local_user: root # The user the CloudWatch Agent runs as.
 
-aws_cwa_on_prem: false
+aws_cwa_on_prem: false # Installed CloudWatch Agent for none EC2 instances.
+aws_cwa_debug: false # Run CloudWatch Agent with debug log messages.

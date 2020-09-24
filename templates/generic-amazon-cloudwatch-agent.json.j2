@@ -10,6 +10,9 @@
 {% if aws_cwa_local_user != "root" %}
         "run_as_user": "{{aws_cwa_local_user}}",
 {% endif %}
+{% if aws_cwa_debug %}
+        "run_as_user": "{{aws_cwa_debug}}",
+{% endif %}
         "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
         "debug": false
     },
