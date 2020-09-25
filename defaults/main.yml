@@ -9,3 +9,5 @@ aws_cwa_local_user: root # The user the CloudWatch Agent runs as.
 
 aws_cwa_on_prem: false # Installed CloudWatch Agent for none EC2 instances.
 aws_cwa_debug: false # Run CloudWatch Agent with debug log messages.
+
+aws_cwa_agent_logfile: "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"

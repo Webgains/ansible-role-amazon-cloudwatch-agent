@@ -8,6 +8,20 @@
     group: "{{ aws_cwa_local_user }}"
   when: aws_cwa_on_prem
 
+- name: Remove /{{ aws_cwa_local_user }}.aws/config
+  file:
+    path: "/{{ aws_cwa_local_user }}/.aws/config"
+    state: 'absent'
+  notify: restart amazon-cloudwatch-agent
+  when: not aws_cwa_on_prem
+
+- name: Remove /{{ aws_cwa_local_user }}.aws/credentials
+  file:
+    path: "/{{ aws_cwa_local_user }}/.aws/credentials"
+    state: 'absent'
+  notify: restart amazon-cloudwatch-agent
+  when: not aws_cwa_on_prem
+
 - name: Add AWS CWA profile to /{{ aws_cwa_local_user }}/.aws/config
   blockinfile:
     path: "/{{ aws_cwa_local_user }}/.aws/config"
