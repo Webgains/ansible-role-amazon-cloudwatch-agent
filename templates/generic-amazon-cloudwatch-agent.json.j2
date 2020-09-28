@@ -17,8 +17,8 @@
     },
 {% if aws_cwa_logfiles|length > 0 %}
     "logs": {
-{% if aws_cwa_endpoint_override is defined and aws_cwa_endpoint_override|length > 0 %}
-        "endpoint_override": "{{aws_cwa_endpoint_override}}",
+{% if aws_cwa_logging_endpoint is defined and aws_cwa_logging_endpoint|length > 0 %}
+        "endpoint_override": "{{aws_cwa_logging_endpoint}}",
 {% endif %}
         "logs_collected": {
             "files": {
@@ -43,8 +43,8 @@
 {% endif %}
     "metrics": {
         "namespace": "{{aws_cwa_namespace}}",
-{% if aws_cwa_endpoint_override is defined and aws_cwa_endpoint_override|length > 0 %}
-        "endpoint_override": "{{aws_cwa_endpoint_override}}",
+{% if aws_cwa_monitoring_endpoint is defined and aws_cwa_monitoring_endpoint|length > 0 %}
+        "endpoint_override": "{{aws_cwa_monitoring_endpoint}}",
 {% endif %}
         "metrics_collected": {
             "cpu": {
