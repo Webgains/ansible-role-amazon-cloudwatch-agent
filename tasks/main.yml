@@ -1,30 +1,37 @@
 ---
-- name: Ensure /{{ aws_cwa_local_user }}/.aws/ is there
+- name: Update user directory
+  set_fact:
+    aws_cwa_user_path: "/home/{{ aws_cwa_local_user }}"
+  when:
+    - aws_cwa_local_user != "root"
+    - aws_cwa_local_user == "/" # When not default, assume user has overridden.
+
+- name: Ensure {{ aws_cwa_user_path }}/.aws/ is there
   file:
-    path: "/{{ aws_cwa_local_user }}/.aws/"
+    path: "{{ aws_cwa_user_path }}/.aws/"
     state: 'directory'
     mode: '0700'
     owner: "{{ aws_cwa_local_user }}"
     group: "{{ aws_cwa_local_user }}"
   when: aws_cwa_on_prem
 
-- name: Remove /{{ aws_cwa_local_user }}.aws/config
+- name: Remove {{ aws_cwa_user_path }}.aws/config
   file:
-    path: "/{{ aws_cwa_local_user }}/.aws/config"
+    path: "{{ aws_cwa_user_path }}/.aws/config"
     state: 'absent'
   notify: restart amazon-cloudwatch-agent
   when: not aws_cwa_on_prem
 
-- name: Remove /{{ aws_cwa_local_user }}.aws/credentials
+- name: Remove {{ aws_cwa_user_path }}.aws/credentials
   file:
-    path: "/{{ aws_cwa_local_user }}/.aws/credentials"
+    path: "{{ aws_cwa_user_path }}/.aws/credentials"
     state: 'absent'
   notify: restart amazon-cloudwatch-agent
   when: not aws_cwa_on_prem
 
-- name: Add AWS CWA profile to /{{ aws_cwa_local_user }}/.aws/config
+- name: Add AWS CWA profile to {{ aws_cwa_user_path }}/.aws/config
   blockinfile:
-    path: "/{{ aws_cwa_local_user }}/.aws/config"
+    path: "{{ aws_cwa_user_path }}/.aws/config"
     create: 'yes'
     owner: "{{ aws_cwa_local_user }}"
     group: "{{ aws_cwa_local_user }}"
@@ -37,9 +44,9 @@
   notify: restart amazon-cloudwatch-agent
   when: aws_cwa_on_prem
 
-- name: Add AWS CWA profile to /{{ aws_cwa_local_user }}/.aws/credentials
+- name: Add AWS CWA profile to {{ aws_cwa_user_path }}/.aws/credentials
   blockinfile:
-    path: "/{{ aws_cwa_local_user }}/.aws/credentials"
+    path: "{{ aws_cwa_user_path }}/.aws/credentials"
     create: 'yes'
     owner: "{{ aws_cwa_local_user }}"
     group: "{{ aws_cwa_local_user }}"
