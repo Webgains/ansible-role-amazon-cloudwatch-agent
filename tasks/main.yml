@@ -4,7 +4,7 @@
     aws_cwa_user_path: "/home/{{ aws_cwa_local_user }}"
   when:
     - aws_cwa_local_user != "root"
-    - aws_cwa_local_user == "/" # When not default, assume user has overridden.
+    - aws_cwa_user_path == "/root" # When not default, assume user has overridden.
 
 - name: Ensure {{ aws_cwa_user_path }}/.aws/ is there
   file:
@@ -15,14 +15,14 @@
     group: "{{ aws_cwa_local_user }}"
   when: aws_cwa_on_prem
 
-- name: Remove {{ aws_cwa_user_path }}.aws/config
+- name: Remove {{ aws_cwa_user_path }}/.aws/config
   file:
     path: "{{ aws_cwa_user_path }}/.aws/config"
     state: 'absent'
   notify: restart amazon-cloudwatch-agent
   when: not aws_cwa_on_prem
 
-- name: Remove {{ aws_cwa_user_path }}.aws/credentials
+- name: Remove {{ aws_cwa_user_path }}/.aws/credentials
   file:
     path: "{{ aws_cwa_user_path }}/.aws/credentials"
     state: 'absent'
