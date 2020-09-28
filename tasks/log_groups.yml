@@ -1,7 +1,4 @@
 ---
-- debug:
-    var: security_token
-
 - name: Ensure log groups {{ item.log_group_name }} exist 
   cloudwatchlogs_log_group:
     log_group_name: "{{ item.log_group_name }}"
