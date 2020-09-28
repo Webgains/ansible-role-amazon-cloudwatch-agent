@@ -1,5 +1,6 @@
 ---
-- name: Ensure log groups {{ item.log_group_name }} exist 
+- name: Ensure log groups {{ item.log_group_name }} exist
+# TODO: When retention for log group is different for each log stream, the values get overriden by the last entry.
   cloudwatchlogs_log_group:
     log_group_name: "{{ item.log_group_name }}"
     retention: "{{ item.log_retention|int }}"
