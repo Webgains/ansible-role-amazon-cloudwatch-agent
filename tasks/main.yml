@@ -68,9 +68,7 @@
   package:
     name: amazon-cloudwatch-agent
     state: present
-  failed_when: 
-    - not (already_inst.rc == 0)
-    - not (already_inst.rc == 126)
+  ignore_errors: yes
   register: already_inst
 
 - block:
@@ -83,7 +81,7 @@
       file:
         path: '/opt/aws/amazon-cloudwatch-agent'
         state: absent
-    when: already_inst.rc == 0
+    when: (already_inst is success)
   - name: make temp dir for installation files
     file:
       path: "/tmp/aws-cwa-inst"
@@ -100,7 +98,7 @@
     file:
       path: "/tmp/aws-cwa-inst/"
       state: "absent"
-  when: (already_inst.rc == 126) or (aws_install_latest is defined) 
+  when: (already_inst is failed) or (aws_install_latest is defined)      
 
 - name: place cfgs, ie. amazon-cloudwatch-agent.json
   template:
