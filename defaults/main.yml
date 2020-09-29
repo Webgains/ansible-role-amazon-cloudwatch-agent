@@ -8,7 +8,7 @@ aws_cwa_url: "https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest
 aws_cwa_local_user: root # The user the CloudWatch Agent runs as.
 aws_cwa_user_path: "/root"
 
-aws_cwa_on_prem: false # Installed CloudWatch Agent for none EC2 instances.
+aws_cwa_on_prem: "{{ aws_cwa_key_access is not defined or aws_cwa_key_access | length <= 0 }}" # Installed CloudWatch Agent for none EC2 instances.
 aws_cwa_debug: false # Run CloudWatch Agent with debug log messages.
 
 aws_cwa_agent_logfile: "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"

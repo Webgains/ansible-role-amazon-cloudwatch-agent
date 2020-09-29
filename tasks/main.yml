@@ -2,9 +2,8 @@
 - name: Update user directory
   set_fact:
     aws_cwa_user_path: "/home/{{ aws_cwa_local_user }}"
-  when:
-    - aws_cwa_local_user != "root"
-    - aws_cwa_user_path == "/root" # When not default, assume user has overridden.
+  when: (aws_cwa_local_user != "root") and 
+        (aws_cwa_user_path == "/root") # When not default, assume user has overridden.
 
 - name: Ensure {{ aws_cwa_user_path }}/.aws/ is there
   file:
