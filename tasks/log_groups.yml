@@ -7,7 +7,7 @@
     tags: "{{ item.log_group_tags }}"
     aws_access_key: "{{ deploy_aws_access_key | default(aws_access_key | default(lookup('env','AWS_ACCESS_KEY_ID'))) }}"
     aws_secret_key: "{{ deploy_aws_secret_key | default(aws_secret_key | default(lookup('env','AWS_SECRET_ACCESS_KEY'))) }}"
-    security_token: "{{ security_token | default(omit) }}"
+    security_token: "{{ deploy_security_token | default(omit) }}"
     region: "{{ aws_cwa_region }}"
   delegate_to: localhost
   become: no
@@ -24,7 +24,7 @@
       metric_value: "{{ filter.metric_transformation.metric_value }}"
     aws_access_key: "{{ deploy_aws_access_key | default(aws_access_key | default(lookup('env','AWS_ACCESS_KEY_ID'))) }}"
     aws_secret_key: "{{ deploy_aws_secret_key | default(aws_secret_key | default(lookup('env','AWS_SECRET_ACCESS_KEY'))) }}"
-    security_token: "{{ security_token | default(omit) }}"
+    security_token: "{{ deploy_security_token | default(omit) }}"
     region: "{{ aws_cwa_region }}"
   with_items: "{{ item.filters | default([]) }}"
   loop_control:

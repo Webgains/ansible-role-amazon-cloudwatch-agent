@@ -66,7 +66,7 @@ aws_cwa_key_secret: (encrypted)SECRETKEYGOESHERE
 ### security_token
 AWS security token
 ```
-security_token: "{{ lookup('env','AWS_SECURITY_TOKEN') }}"
+deploy_security_token : "{{ lookup('env','AWS_SECURITY_TOKEN') }}"
 ```
 Used while assuming an assumed role
 
