@@ -1,18 +1,39 @@
 ---
-- name: Ensure /root/.aws/ is there
+- name: Update user directory
+  set_fact:
+    aws_cwa_user_path: "/home/{{ aws_cwa_local_user }}"
+  when: (aws_cwa_local_user != "root") and 
+        (aws_cwa_user_path == "/root") # When not default, assume user has overridden.
+
+- name: Ensure {{ aws_cwa_user_path }}/.aws/ is there
   file:
-    path: '/root/.aws/'
+    path: "{{ aws_cwa_user_path }}/.aws/"
     state: 'directory'
     mode: '0700'
-    owner: 'root'
-    group: 'root'
+    owner: "{{ aws_cwa_local_user }}"
+    group: "{{ aws_cwa_local_user }}"
+  when: aws_cwa_on_prem
 
-- name: Add AWS CWA profile to /root/.aws/config
+- name: Remove {{ aws_cwa_user_path }}/.aws/config
+  file:
+    path: "{{ aws_cwa_user_path }}/.aws/config"
+    state: 'absent'
+  notify: restart amazon-cloudwatch-agent
+  when: not aws_cwa_on_prem
+
+- name: Remove {{ aws_cwa_user_path }}/.aws/credentials
+  file:
+    path: "{{ aws_cwa_user_path }}/.aws/credentials"
+    state: 'absent'
+  notify: restart amazon-cloudwatch-agent
+  when: not aws_cwa_on_prem
+
+- name: Add AWS CWA profile to {{ aws_cwa_user_path }}/.aws/config
   blockinfile:
-    path: '/root/.aws/config'
+    path: "{{ aws_cwa_user_path }}/.aws/config"
     create: 'yes'
-    owner: 'root'
-    group: 'root'
+    owner: "{{ aws_cwa_local_user }}"
+    group: "{{ aws_cwa_local_user }}"
     mode: 0600
     marker: "# {mark} ansible aws-cwa cfg"
     block: |
@@ -20,13 +41,14 @@
       output = json
       region = {{aws_cwa_region|default('us-east-1')}}
   notify: restart amazon-cloudwatch-agent
+  when: aws_cwa_on_prem
 
-- name: Add AWS CWA profile to /root/.aws/credentials
+- name: Add AWS CWA profile to {{ aws_cwa_user_path }}/.aws/credentials
   blockinfile:
-    path: '/root/.aws/credentials'
+    path: "{{ aws_cwa_user_path }}/.aws/credentials"
     create: 'yes'
-    owner: 'root'
-    group: 'root'
+    owner: "{{ aws_cwa_local_user }}"
+    group: "{{ aws_cwa_local_user }}"
     mode: 0600
     marker: "# {mark} ansible aws-cwa cfg"
     block: |
@@ -35,6 +57,7 @@
       aws_secret_access_key={{aws_cwa_key_secret}}
   notify: restart amazon-cloudwatch-agent
   no_log: True
+  when: aws_cwa_on_prem
 
 - name: Install pre-requisits
   package:
@@ -54,7 +77,6 @@
       package:
         name: amazon-cloudwatch-agent
         state: absent
-        purge: yes
     - name: purge dir tree if exists
       file:
         path: '/opt/aws/amazon-cloudwatch-agent'
@@ -67,7 +89,7 @@
   - name: download & unpack the latest cloudwatch agent .zip
     unarchive:
       remote_src: "yes"
-      src: "https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip"
+      src: "{{ aws_cwa_url }}"
       dest: "/tmp/aws-cwa-inst/"
   - name: run the installer
     shell: cd /tmp/aws-cwa-inst && echo 'N' | ./install.sh
@@ -76,8 +98,7 @@
     file:
       path: "/tmp/aws-cwa-inst/"
       state: "absent"
-  when: (already_inst is failed) or (aws_install_latest is defined) 
-  #ignore_errors: "{{ ansible_check_mode }}"
+  when: (already_inst is failed) or (aws_install_latest is defined)      
 
 - name: place cfgs, ie. amazon-cloudwatch-agent.json
   template:
@@ -85,13 +106,6 @@
     dest: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
     mode: 0644
   notify: restart amazon-cloudwatch-agent
-
-- name: Install Python modules
-  become: yes
-  pip:
-    name:
-      - boto3
-  delegate_to: localhost
 
 - name: Setup log groups
   include_tasks: log_groups.yml
@@ -107,8 +121,8 @@
 - name: Add log rotation for amazon-cloudwatch-agent.log
   copy:
     dest: '/etc/logrotate.d/aws-cwa'
-    owner: 'root'
-    group: 'root'
+    owner: "{{ aws_cwa_local_user }}"
+    group: "{{ aws_cwa_local_user }}"
     content: |
         /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log {
             size 50M

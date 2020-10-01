@@ -1,14 +1,16 @@
 ---
-
-- name: Ensure log groups {{ item.log_group_name }} exist 
+- name: Ensure log groups {{ item.log_group_name }} exist
+# TODO: When retention for log group is different for each log stream, the values get overriden by the last entry.
   cloudwatchlogs_log_group:
     log_group_name: "{{ item.log_group_name }}"
-    retention: "{{item.log_retention|int}}"
-    tags: "{{item.log_group_tags}}"
+    retention: "{{ item.log_retention|int }}"
+    tags: "{{ item.log_group_tags }}"
     aws_access_key: "{{ deploy_aws_access_key | default(aws_access_key | default(lookup('env','AWS_ACCESS_KEY_ID'))) }}"
     aws_secret_key: "{{ deploy_aws_secret_key | default(aws_secret_key | default(lookup('env','AWS_SECRET_ACCESS_KEY'))) }}"
-    region: "{{ aws_region }}"
+    security_token: "{{ deploy_security_token | default(omit) }}"
+    region: "{{ aws_cwa_region }}"
   delegate_to: localhost
+  become: no
 
 - name: Ensure log group {{ item.log_group_name }} matrics exist
   cloudwatchlogs_log_group_metric_filter:
@@ -22,9 +24,11 @@
       metric_value: "{{ filter.metric_transformation.metric_value }}"
     aws_access_key: "{{ deploy_aws_access_key | default(aws_access_key | default(lookup('env','AWS_ACCESS_KEY_ID'))) }}"
     aws_secret_key: "{{ deploy_aws_secret_key | default(aws_secret_key | default(lookup('env','AWS_SECRET_ACCESS_KEY'))) }}"
-    region: "{{ aws_region }}"
+    security_token: "{{ deploy_security_token | default(omit) }}"
+    region: "{{ aws_cwa_region }}"
   with_items: "{{ item.filters | default([]) }}"
   loop_control:
     loop_var: filter
     label: "{{ item.log_group_name }}"
   delegate_to: localhost
+  become: no

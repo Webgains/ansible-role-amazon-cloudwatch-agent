@@ -2,11 +2,24 @@
     "agent": {
         "metrics_collection_interval": 60,
         "region": "{{aws_cwa_region}}",
-        "logfile": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log",
-        "debug": false
+{% if aws_cwa_role_arn is defined %}
+        "credentials": {
+            "role_arn": "{{aws_cwa_role_arn}}"
+        },
+{% endif %}
+{% if aws_cwa_local_user != "root" %}
+        "run_as_user": "{{aws_cwa_local_user}}",
+{% endif %}
+{% if aws_cwa_debug %}
+        "debug": "{{aws_cwa_debug}}"
+{% endif %}
+        "logfile": "{{ aws_cwa_agent_logfile }}"
     },
 {% if aws_cwa_logfiles|length > 0 %}
     "logs": {
+{% if aws_cwa_logging_endpoint is defined and aws_cwa_logging_endpoint|length > 0 %}
+        "endpoint_override": "{{aws_cwa_logging_endpoint}}",
+{% endif %}
         "logs_collected": {
             "files": {
                 "collect_list": [
@@ -30,6 +43,9 @@
 {% endif %}
     "metrics": {
         "namespace": "{{aws_cwa_namespace}}",
+{% if aws_cwa_monitoring_endpoint is defined and aws_cwa_monitoring_endpoint|length > 0 %}
+        "endpoint_override": "{{aws_cwa_monitoring_endpoint}}",
+{% endif %}
         "metrics_collected": {
             "cpu": {
                 "measurement": [
