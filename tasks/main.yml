@@ -107,7 +107,7 @@
     mode: 0644
   notify: restart amazon-cloudwatch-agent
 
-- name: compile and copy over amazon-cloudwatch-agent.json
+- name: compile and copy over common-config.toml
   template:
     src: "{{ aws_cwa_config }}"
     dest: "/opt/aws/amazon-cloudwatch-agent/etc/common-config.toml"
