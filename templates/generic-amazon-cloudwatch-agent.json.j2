@@ -43,6 +43,11 @@
 {% endif %}
     "metrics": {
         "namespace": "{{aws_cwa_namespace}}",
+{% if aws_cwa_memory_monitoring is defined and aws_cwa_memory_monitoring %}
+        "append_dimensions": {
+            "InstanceId": "${aws:InstanceId}"
+        },
+{% endif %}
 {% if aws_cwa_monitoring_endpoint is defined and aws_cwa_monitoring_endpoint|length > 0 %}
         "endpoint_override": "{{aws_cwa_monitoring_endpoint}}",
 {% endif %}
