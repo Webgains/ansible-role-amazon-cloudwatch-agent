@@ -43,6 +43,12 @@
 {% endif %}
     "metrics": {
         "namespace": "{{aws_cwa_namespace}}",
+        "append_dimensions": {
+                "ImageId": "${aws:ImageId}",
+                "InstanceId": "${aws:InstanceId}",
+                "InstanceType": "${aws:InstanceType}",
+                "AutoScalingGroupName": "${aws:AutoScalingGroupName}"
+            },
 {% if aws_cwa_monitoring_endpoint is defined and aws_cwa_monitoring_endpoint|length > 0 %}
         "endpoint_override": "{{aws_cwa_monitoring_endpoint}}",
 {% endif %}
