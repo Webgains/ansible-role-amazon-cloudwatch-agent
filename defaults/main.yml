@@ -13,3 +13,5 @@ aws_cwa_on_prem: "{{ aws_cwa_key_access is not defined or aws_cwa_key_access | l
 aws_cwa_debug: false # Run CloudWatch Agent with debug log messages.
 
 aws_cwa_agent_logfile: "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
+
+aws_cwa_memory_monitoring: false
